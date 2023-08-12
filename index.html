@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tachlog Employees Attendance Log</title>
+    <style>
+        /* Add your CSS styles here */
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Tachlog Employees Attendance Log</h1>
+    </header>
+    <div>
+        <label for="datePicker">Select Date:</label>
+        <input type="date" id="datePicker" value="2023-08-12">
+    </div>
+    <div id="attendanceDetails">
+        <!-- Attendance details will be displayed here -->
+    </div>
+
+    <script>
+        const datePicker = document.getElementById("datePicker");
+        const attendanceDetails = document.getElementById("attendanceDetails");
+
+        datePicker.addEventListener("change", fetchAttendanceDetails);
+
+        function fetchAttendanceDetails() {
+            const selectedDate = datePicker.value;
+            const requestXML = `
+      <?xml version="1.0" encoding="utf-8"?>
+      <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+          <soap:Body>
+              <GetTransactionsLog xmlns="http://tempuri.org/">
+                  <FromDateTime>${selectedDate} 00:00:01</FromDateTime>
+                  <ToDateTime>${selectedDate} 23:59:00</ToDateTime>
+                  <SerialNumber>BJ2C184160599</SerialNumber>
+                  <UserName>essl_api_user</UserName>
+                  <UserPassword>eSSL@api123</UserPassword>
+                  <strDataList></strDataList>
+              </GetTransactionsLog>
+          </soap:Body>
+      </soap:Envelope>
+    `;
+
+            // You can use fetch() or any AJAX library to make the SOAP API call
+            // Replace the following with your actual API call
+            const apiUrl = "http://103.153.92.249:90/iclock/WebAPIService.asmx?op=GetTransactionsLog";
+            fetch(apiUrl, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "text/xml",
+                },
+                body: requestXML,
+            })
+                .then(response => response.text())
+                .then(parseAttendanceResponse);
+        }
+
+        function parseAttendanceResponse(responseXML) {
+            const parser = new DOMParser();
+            const xmlDoc = parser.parseFromString(responseXML, "text/xml");
+            const logs = xmlDoc.getElementsByTagName("strDataList")[0].textContent.trim().split("\n");
+
+            let detailsHTML = "<ul>";
+            logs.forEach(log => {
+                const [employeeId, dateTime] = log.split(" ");
+                detailsHTML += `<li>Employee ID: ${employeeId}, Punch Time: ${dateTime}</li>`;
+            });
+            detailsHTML += "</ul>";
+
+            attendanceDetails.innerHTML = detailsHTML;
+        }
+    </script>
+</body>
+
+</html>
