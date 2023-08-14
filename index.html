@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tachlog Employees Attendance Log</title>
+    <!-- <title>Tachlog Employees Attendance Log</title> -->
     <style>
         /* Add your CSS styles here */
     </style>
@@ -12,7 +12,7 @@
 
 <body>
     <header>
-        <h1>Tachlog Employees Attendance Log</h1>
+        <!-- <h1>Tachlog Employees Attendance Log</h1> -->
     </header>
     <div>
         <label for="datePicker">Select Date:</label>
@@ -21,15 +21,49 @@
     <div id="attendanceDetails">
         <!-- Attendance details will be displayed here -->
     </div>
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 
-    <script>
+    <script src="script.js"></script>
+
+    <!-- <script>
         const datePicker = document.getElementById("datePicker");
         const attendanceDetails = document.getElementById("attendanceDetails");
+
+        var myHeaders = new Headers();
+        myHeaders.append("Content-Type", "text/xml");
+
+        var raw = `<?xml version="1.0" encoding="utf-8"?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <soap:Body>
+    <GetTransactionsLog xmlns="http://tempuri.org/">
+      <FromDateTime>2023-08-12 10:00:01</FromDateTime>
+      <ToDateTime>2023-08-12 23:59:00</ToDateTime>
+      <SerialNumber>BJ2C184160599</SerialNumber>
+      <UserName>essl_api_user</UserName>
+      <UserPassword>eSSL@api123</UserPassword>
+      <strDataList></strDataList>
+    </GetTransactionsLog>
+  </soap:Body>
+</soap:Envelope>`;
+
+        var requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+            body: raw,
+            redirect: 'follow'
+        };
+
+        fetch("http://103.153.92.249:90/iclock/WebAPIService.asmx?op=GetTransactionsLog", requestOptions)
+            .then(response => response.text())
+            .then(result => console.log(result))
+            .catch(error => console.log('error', error));
+
 
         datePicker.addEventListener("change", fetchAttendanceDetails);
 
         function fetchAttendanceDetails() {
             const selectedDate = datePicker.value;
+            console.log(selectedDate);
             const requestXML = `
       <?xml version="1.0" encoding="utf-8"?>
       <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
@@ -51,6 +85,7 @@
             const apiUrl = "http://103.153.92.249:90/iclock/WebAPIService.asmx?op=GetTransactionsLog";
             fetch(apiUrl, {
                 method: "POST",
+                mode: 'no-cors', // Use no-cors mode
                 headers: {
                     "Content-Type": "text/xml",
                 },
@@ -74,7 +109,7 @@
 
             attendanceDetails.innerHTML = detailsHTML;
         }
-    </script>
+    </script> -->
 </body>
 
 </html>
